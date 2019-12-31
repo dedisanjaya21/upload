@@ -6,9 +6,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Form Upload</title>  
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> 
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">   
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/css/css.css">    
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/css/toastr.min.css">   
     <link rel="stylesheet" href="<?php echo base_url();?>assets/font-awesome/css/font-awesome.min.css">
   </head>
 
@@ -27,21 +27,26 @@
           <input type="file" class="form-control" id="gambar" name="gambar" accept="image/*">    
         </div>
         <div class="form-group">
-        <button type="button" name="unggah" id="unggah" class="btn btn-info float-right"><i class="icon-upload"></i> Unggah</button>
+        <button type="button" name="unggah" id="unggah" class="btn btn-sm btn-info float-right"><i class="icon-upload"></i> Unggah</button>
         </div>
         &nbsp;<hr>
         <div class="form-group">
             <button type="submit" name="save" id="save" class="btn btn-primary" disabled><i class="icon-save"></i> Simpan</button>   
         </div>
-        
+        <div class="progress" style="display: none;" id="upload_bar">
+				              <div id="progress-bar" class="progress-bar progress-bar-success progress-bar-striped " 
+					              role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
+					                20%
+				              </div>
+			            </div>        
       </form>
      </div>
 
     </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery.min.js"></script>
+<script src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>  
+<script src="<?php echo base_url();?>assets/js/toastr.min.js"></script>
 <script type="text/javascript">
 
     //input form
@@ -89,9 +94,11 @@
     
     
 
-    $('#unggah').on('click', function(event) {
-      
+    $('#unggah').on('click', function(event) {      
       event.preventDefault();
+
+      var progressBar = $('#progress-bar');
+
       var inputFile = $('input[name=gambar]');
       var fileToUpload = inputFile[0].files[0];
       if (fileToUpload != undefined) {
@@ -108,16 +115,33 @@
               if(response.success === true) {
                 $("#gambar").val('');   
                 $("#save").removeAttr('disabled');
+                $('.progress').hide();
                 toastr.success("Gambar berhasil di unggah");               
               } else {
                 $.each(response.messages,function(key, value){
                   toastr.error(value);
+                  $('.progress').hide();
                 });
               }
-            }
+            },
+              xhr: function() {
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(event) {
+                  if (event.lengthComputable) {
+                    var percentComplete = Math.round( (event.loaded / event.total) * 100 );
+                    // console.log(percentComplete);
+                    
+                    $('.progress').show();
+                    progressBar.css({width: percentComplete + "%"});
+                    progressBar.text(percentComplete + '%');
+                  };
+                }, false);
+
+                return xhr;
+              }
           });  
       }else{
-        toastr.error("Pilih Gambar yang akan di unggah dulu!!");
+        toastr.warning("Pilih Gambar yang akan di unggah dulu!!");
       }   
 	  });
 

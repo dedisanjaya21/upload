@@ -21,8 +21,8 @@ class Upload extends CI_Controller {
 		$data = array ('success' => false, 'messages'=> array());	
 		$config['file_name'] 	= random_string('numeric',3);
         $config['upload_path'] 	= './assets/sample/';  
-        $config['max_size']     = 2000;
-        $config['allowed_types']= 'gif|jpeg|jpg|png';   
+        $config['max_size']     = 800000;
+        $config['allowed_types']= '*';   
         $config['encrypt_name'] = TRUE;
         $this->load->library('upload', $config);  
         if(!$this->upload->do_upload('gambar'))  
