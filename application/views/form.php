@@ -117,7 +117,7 @@
             }
           });  
       }else{
-        toastr.error("Pilih Gambar yang akan di unggah dulu!");
+        toastr.error("Pilih Gambar yang akan di unggah dulu!!");
       }   
 	  });
 
